@@ -1,0 +1,22 @@
+/* @theme tech */
+/* 팔레트: tech — 다크, GitHub 계열. 기술/개발 발표 기본 테마.
+   구조(레이아웃·컴포넌트)는 themes/base.css 에 있고, 빌드가 둘을 합친다.
+   색·폰트만 여기 :root 에. 새 테마를 만들려면 이 파일을 복사해 :root 만 바꾼다. */
+
+@import 'default';
+
+:root {
+  --bg:        #0d1117;
+  --bg-soft:   #161b22;
+  --fg:        #e6edf3;
+  --fg-muted:  #9aa7b4;
+  --accent:    #58a6ff;
+  --accent-2:  #3fb950;
+  --warn:      #f0883e;
+  --danger:    #f85149;
+  --border:    #30363d;
+  --code-bg:   #161b22;
+  --cover-grad: linear-gradient(135deg, #0d1117 0%, #1a2233 100%);
+  --font-sans: "Pretendard", "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "Fira Code", monospace;
+}

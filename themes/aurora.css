@@ -1,0 +1,21 @@
+/* @theme aurora */
+/* 팔레트: aurora — 비비드 다크. 딥네이비 배경 + 보라/teal accent + 그라데이션 표지.
+   모던 SaaS·제품 발표 느낌. 구조는 themes/base.css. 색·폰트만 여기 :root 에. */
+
+@import 'default';
+
+:root {
+  --bg:        #0b1020;
+  --bg-soft:   #161d33;
+  --fg:        #e8ecf7;
+  --fg-muted:  #98a3c0;
+  --accent:    #8b5cf6;
+  --accent-2:  #2dd4bf;
+  --warn:      #fbbf24;
+  --danger:    #fb7185;
+  --border:    #2a3350;
+  --code-bg:   #131a2e;
+  --cover-grad: linear-gradient(135deg, #0b1020 0%, #2a1b4d 55%, #0b3b46 100%);
+  --font-sans: "Pretendard", "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "Fira Code", monospace;
+}

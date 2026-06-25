@@ -1,0 +1,10 @@
+# 빌드 산출물
+node_modules/
+dist/
+.build/
+*.log
+
+# 로컬 상태 (공유 대상 아님)
+.omc/
+decks/.active
+.claude/settings.local.json

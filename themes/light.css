@@ -1,0 +1,21 @@
+/* @theme light */
+/* 팔레트: light — 밝은 화이트 배경 + 파랑 accent. 문서·세미나·인쇄 친화.
+   구조는 themes/base.css. 색·폰트만 여기 :root 에. */
+
+@import 'default';
+
+:root {
+  --bg:        #ffffff;
+  --bg-soft:   #f3f5f8;
+  --fg:        #1f2933;
+  --fg-muted:  #67727f;
+  --accent:    #2563eb;
+  --accent-2:  #15a34a;
+  --warn:      #c2630a;
+  --danger:    #dc2626;
+  --border:    #d9dee6;
+  --code-bg:   #f3f5f8;
+  --cover-grad: linear-gradient(135deg, #ffffff 0%, #e7f0fc 100%);
+  --font-sans: "Pretendard", "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "Fira Code", monospace;
+}

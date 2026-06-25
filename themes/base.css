@@ -1,0 +1,196 @@
+/* ──────────────────────────────────────────────────────────────
+   base.css — 테마 공용 구조(레이아웃 + 컴포넌트 + 동적). 색은 안 담는다.
+   이 파일은 단독 Marp 테마가 아니다(@theme·@import 없음·:root 없음).
+   빌드(build.mjs)가 팔레트(themes/<name>.css)와 합쳐 실제 테마를 만든다.
+   → 레이아웃/컴포넌트를 고치려면 여기 한 곳만. 색·폰트는 각 팔레트의 :root.
+   모든 색은 var(--*)로만 참조 → 팔레트만 갈아끼우면 테마가 바뀐다.
+   ────────────────────────────────────────────────────────────── */
+
+section {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 26px;
+  padding: 70px 80px;
+  line-height: 1.55;
+}
+
+h1 { font-size: 1.9em; color: var(--fg); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.4em; color: var(--accent); font-weight: 700; border-bottom: 2px solid var(--border); padding-bottom: .25em; }
+h3 { font-size: 1.1em; color: var(--fg-muted); font-weight: 600; }
+a  { color: var(--accent); }
+strong { color: var(--accent); }
+em { color: var(--accent-2); font-style: normal; font-weight: 600; }
+
+code {
+  font-family: var(--font-mono);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: .1em .35em;
+  font-size: .85em;
+}
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; }
+pre code { border: none; background: transparent; }
+
+blockquote {
+  border-left: 4px solid var(--accent);
+  color: var(--fg-muted);
+  padding-left: 1em;
+  font-style: italic;
+}
+
+table { border-collapse: collapse; font-size: .9em; }
+th { background: var(--bg-soft); color: var(--accent); border: 1px solid var(--border); padding: .5em .8em; }
+td { border: 1px solid var(--border); padding: .5em .8em; }
+/* Marp default 테마가 행에 밝은 배경을 깔아 글씨가 묻히는 문제 → 테마 배경·글씨로 덮어씀
+   (section table … = default 테마와 동일 특이도, 뒤에 와서 이김) */
+section table tr { background: var(--bg); }
+section table tr:nth-child(2n) { background: var(--bg-soft); }
+section table td { color: var(--fg); }
+
+/* 페이지 번호 */
+section::after { color: var(--fg-muted); font-size: .6em; }
+
+/* ── 레이아웃 (slide당 1개 · <!-- _class: 이름 -->) ──────────────── */
+
+/* 표지 슬라이드: <!-- _class: cover --> */
+section.cover {
+  background: var(--cover-grad);
+  justify-content: center;
+}
+section.cover h1 { font-size: 2.6em; }
+section.cover h3 { color: var(--accent); }
+
+/* 섹션 구분: <!-- _class: section --> */
+section.section {
+  background: var(--bg-soft);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+section.section h1 { font-size: 2.4em; color: var(--accent); }
+
+/* 기본 본문: <!-- _class: content --> (상단 accent 바 + 상단 정렬) */
+section.content { position: relative; justify-content: flex-start; }
+section.content::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+
+/* 자유 캔버스: <!-- _class: blank --> (스타일 최소 · 자유 배치) */
+section.blank { padding: 40px; justify-content: flex-start; }
+section.blank h1, section.blank h2 { border: none; color: var(--fg); }
+
+/* 풀블리드 임팩트: <!-- _class: full --> (여백 0 · 중앙 · 큰 텍스트/이미지) */
+section.full { position: relative; padding: 0; justify-content: center; align-items: center; text-align: center; }
+section.full h1 { font-size: 3em; }
+section.full img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 좌우 분할: <!-- _class: two --> + 안에 <div> 두 개 */
+section.two { flex-direction: row; align-items: center; gap: 2em; }
+section.two > * { flex: 1; min-width: 0; }
+
+/* 마무리/CTA: <!-- _class: end --> */
+section.end { background: var(--bg-soft); justify-content: center; align-items: center; text-align: center; }
+section.end h1 { color: var(--accent); font-size: 2.2em; }
+section.end a { color: var(--accent-2); }
+
+/* 목차: <!-- _class: agenda --> (번호 목록 강조) */
+section.agenda { justify-content: center; }
+section.agenda ol { list-style: none; padding-left: 0; counter-reset: ag; font-size: 1.25em; line-height: 1.9; }
+section.agenda ol li { counter-increment: ag; }
+section.agenda ol li::before {
+  content: counter(ag, decimal-leading-zero); color: var(--accent);
+  font-weight: 800; font-family: var(--font-mono); margin-right: .7em;
+}
+
+/* 비교: <!-- _class: compare --> + 안에 <div> 두 개 (좌 vs 우 패널) */
+section.compare { flex-direction: row; gap: 1.5em; align-items: stretch; justify-content: center; }
+section.compare > * { flex: 1; min-width: 0; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 1em 1.3em; }
+
+/* 이미지+설명 좌우: <!-- _class: imgtext --> + <div>이미지</div><div>설명</div> */
+section.imgtext { flex-direction: row; align-items: center; gap: 2em; }
+section.imgtext > * { flex: 1; min-width: 0; }
+section.imgtext img { width: 100%; border-radius: 12px; }
+
+/* 인용/한 문장 임팩트: <!-- _class: quote --> */
+section.quote { justify-content: center; align-items: center; text-align: center; }
+section.quote h1, section.quote blockquote, section.quote p { font-size: 1.8em; font-weight: 700; max-width: 82%; line-height: 1.4; border: none; font-style: normal; }
+
+/* 지표 강조 풀슬라이드: <!-- _class: metrics --> (가운데 큰 숫자) */
+section.metrics { justify-content: center; align-items: center; text-align: center; }
+
+/* ── 컴포넌트 (slide당 여러 개 · <div class="이름">) ──────────────── */
+
+/* 어둡게/강조 박스 */
+.box { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: .8em 1.2em; }
+.box.accent { border-color: var(--accent); }
+.box.warn   { border-color: var(--warn); }
+.box.danger { border-color: var(--danger); }
+
+/* 2단 그리드: <div class="cols"> ... </div> */
+.cols  { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; }
+.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2em; }
+
+/* 지표 카드 */
+.metric { text-align: center; }
+.metric .num { font-size: 2.4em; font-weight: 800; color: var(--accent-2); display: block; }
+.metric .label { color: var(--fg-muted); font-size: .8em; }
+
+.muted { color: var(--fg-muted); }
+.small { font-size: .8em; }
+.src   { color: var(--fg-muted); font-size: .65em; margin-top: 1em; }  /* 출처 캡션: 텍스트 끝에 {.src} */
+
+/* Mermaid 다이어그램 (HTML 전용 · 빌드가 mermaid.js 주입해 런타임 렌더) */
+/* mermaid 기본은 자연 크기(작게) → max-width:none 으로 캡 풀고 슬라이드 폭/높이에 맞춰 키운다.
+   viewBox+preserveAspectRatio 라 박스 안에서 비율 유지하며 스케일업. */
+.mermaid { display: flex; justify-content: center; align-items: center; width: 100%; margin: .2em 0; }
+.mermaid svg { max-width: none !important; width: 100%; height: auto; max-height: 66vh; }
+
+/* 형광펜 강조: ==텍스트== (markdown-it-mark) — **accent**·*accent-2* 외 세 번째 강조.
+   배경은 --warn 을 옅게(color-mix) 깔아 어느 팔레트에서도 자동으로 맞는다. */
+mark { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); padding: .05em .25em; border-radius: 4px; font-weight: 600; }
+
+/* ── 동적 컴포넌트 (HTML 발표 전용 · 빌드가 애니메이션 JS 자동 주입) ──
+   슬라이드가 화면에 나타나는 순간 작동. PDF/PPTX에선 정지 상태로 보임. */
+
+/* 카운트업 숫자: <span class="count" data-to="99.9" data-suffix="%">0</span>
+   옵션: data-from(시작값) · data-prefix · data-suffix · data-dur(ms) */
+.count { font-weight: 800; color: var(--accent-2); font-variant-numeric: tabular-nums; }
+
+/* 차오르는 막대: <div class="bar" data-pct="80" data-label="Python"></div> */
+.bar {
+  position: relative; height: 1.7em; margin: .45em 0;
+  background: var(--bg-soft); border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+}
+.bar::after {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--pct, 0%); background: var(--accent);
+  transition: width 1.1s cubic-bezier(.2, .8, .2, 1);
+}
+.bar[data-label]::before {
+  content: attr(data-label); position: absolute; left: .8em; top: 50%;
+  transform: translateY(-50%); z-index: 1;
+  font-size: .8em; font-weight: 700; color: var(--fg);
+}
+/* 막대 색 변형 */
+.bar.warn::after   { background: var(--warn); }
+.bar.danger::after { background: var(--danger); }
+
+/* 인터랙티브 시뮬레이터: 슬라이더로 변수를 바꾸면 내부 수치·막대가 실시간 갱신.
+   <div class="sim" data-var="pool" data-min="1" data-max="50" data-value="10"> … </div>
+   ─ 컨트롤: <label class="sim-ctrl">…<span class="sim-now"></span><input type="range"></label>
+   ─ 출력행: <div class="sim-row"><span>라벨</span><div class="bar" data-expr="식"></div>
+              <b class="sim-out" data-expr="식" data-suffix=" req/s"></b></div>
+   data-expr 은 Math 함수와 변수(예: pool)로 계산. PDF/PPTX에선 초기값 정지. */
+.sim { background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 1em 1.3em; }
+.sim .sim-ctrl { display: flex; align-items: center; gap: .7em; font-weight: 700; margin-bottom: .8em; }
+.sim .sim-ctrl input[type=range] { flex: 1; accent-color: var(--accent); }
+.sim .sim-now { color: var(--accent); font-variant-numeric: tabular-nums; min-width: 2em; }
+.sim .sim-row { display: grid; grid-template-columns: 7em 1fr 6em; align-items: center; gap: .9em; margin: .5em 0; }
+.sim .sim-row > span { color: var(--fg-muted); font-size: .9em; }
+.sim .sim-row .bar { margin: 0; }
+.sim .sim-row .bar::after { transition: width .15s linear; }   /* 드래그 즉시 반응 */
+.sim .sim-out { text-align: right; font-weight: 800; color: var(--accent-2); font-variant-numeric: tabular-nums; }
