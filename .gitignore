@@ -3,6 +3,8 @@ node_modules/
 dist/
 .build/
 *.log
+# @puppeteer/browsers 로 받은 로컬 chromium (PDF/PPTX·렌더용, 공유 제외)
+chrome/
 
 # 로컬 상태 (공유 대상 아님)
 .omc/

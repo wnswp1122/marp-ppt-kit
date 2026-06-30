@@ -2,6 +2,7 @@
 // 장당 슬라이드 파일(slides/NN-*.md)을 _header.md와 합쳐 Marp로 빌드한다.
 //   node build.mjs <deck>            → HTML  (예: docker/week1)
 //   node build.mjs <deck> pdf|pptx   → 해당 포맷
+//   node build.mjs <deck> png        → 슬라이드별 PNG (dist/<deck>.shots/slide.NNN.png) — 시각 검토용
 //   node build.mjs <group>           → 그룹 하위 덱 전부 (예: docker → docker/week1, week2 …)
 //   node build.mjs all [fmt]         → decks/** 전부 빌드 (중첩 폴더 재귀 탐색)
 //   node build.mjs <deck> --serve    → 라이브 뷰어: 자동 재빌드 + 브라우저 자동 새로고침
@@ -41,7 +42,7 @@ const THEME_ARGS = ['--theme-set', buildThemeSet()];
 const mdNote = new MarkdownIt({ breaks: true }).use(mdMark);
 const DEFAULT_HEADER = '---\nmarp: true\ntheme: tech\npaginate: true\n---';
 
-const FMT = { html: ['--html'], pdf: ['--html', '--pdf'], pptx: ['--html', '--pptx'] };
+const FMT = { html: ['--html'], pdf: ['--html', '--pdf'], pptx: ['--html', '--pptx'], png: ['--html', '--images', 'png'] };
 
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', svg: 'image/svg+xml', webp: 'image/webp' };
 
@@ -305,6 +306,19 @@ const WIN_BROWSERS = [
   '/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe',
   '/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
 ];
+// `npx @puppeteer/browsers install chrome`로 받은 로컬 chromium (chrome/<plat-ver>/chrome-*/chrome).
+// WSL의 Windows chrome는 headless 실행이 자주 실패 → 받아둔 리눅스 chrome을 그보다 우선한다.
+function localChrome() {
+  const dir = join(root, 'chrome');
+  if (!existsSync(dir)) return null;
+  for (const d of readdirSync(dir)) {
+    for (const rel of ['chrome-linux64/chrome', 'chrome-win64/chrome.exe', 'chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing']) {
+      const p = join(dir, d, rel);
+      if (existsSync(p)) return p;
+    }
+  }
+  return null;
+}
 function findBrowser() {
   for (const e of [process.env.CHROME_PATH, process.env.PUPPETEER_EXECUTABLE_PATH])
     if (e && existsSync(e)) return e;
@@ -314,6 +328,8 @@ function findBrowser() {
       if (p) return p;
     } catch { /* 없음 → 다음 후보 */ }
   }
+  const local = localChrome();
+  if (local) return local;            // 받아둔 리눅스 chrome (Windows chrome보다 안정적)
   for (const p of WIN_BROWSERS) if (existsSync(p)) return p;
   return null;
 }
@@ -417,9 +433,11 @@ function buildDeck(deck, fmt) {
   writeFileSync(tmp, combined);
 
   const ext = fmt === 'html' ? 'html' : fmt;
-  const out = join(root, 'dist', `${deck}.${ext}`);
+  // png(--images)은 슬라이드 1장 = 파일 1개 → 전용 폴더에 slide.NNN.png 로. 그 외는 dist/<deck>.<ext> 단일 파일.
+  const out = fmt === 'png' ? join(root, 'dist', `${deck}.shots`, 'slide.png') : join(root, 'dist', `${deck}.${ext}`);
+  const outLabel = fmt === 'png' ? `dist/${deck}.shots/slide.NNN.png` : `dist/${deck}.${ext}`;
   mkdirSync(dirname(out), { recursive: true });
-  console.log(`▸ ${deck}: ${files.length}장 → dist/${deck}.${ext}`);
+  console.log(`▸ ${deck}: ${files.length}장 → ${outLabel}`);
   warnOverflow(slidesDir, files);   // 내용 넘침 정적 검사 (추정 경고만, 빌드는 진행)
   lintSlides(slidesDir, files);     // 빌드 가드 3종 (---·번호·data-expr)
   // 이미지 인라인 용량 경고: self-contained HTML이 너무 무거워지면(공유·로딩 부담) 알림
@@ -542,7 +560,7 @@ const PORT = portArg ? (parseInt(portArg.split('=')[1]) || 4000) : 4000;
 const positional = rawArgs.filter(a => !a.startsWith('--'));
 const arg = positional[0];
 const fmt = (positional[1] || 'html').toLowerCase();
-if (!FMT[fmt]) { console.error(`✗ 알 수 없는 포맷: ${fmt} (html|pdf|pptx)`); process.exit(1); }
+if (!FMT[fmt]) { console.error(`✗ 알 수 없는 포맷: ${fmt} (html|pdf|pptx|png)`); process.exit(1); }
 
 // decks/ 이하에서 slides/ 폴더를 가진 디렉토리(=덱)를 재귀로 찾는다.
 // slides/가 없으면 그룹 폴더로 보고 더 깊이 탐색. .으로 시작하는 폴더(.obsidian 등)는 건너뜀.

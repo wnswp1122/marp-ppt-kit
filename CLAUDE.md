@@ -99,6 +99,7 @@ PowerPoint의 "슬라이드 레이아웃 + 도형"과 같은 모델. 둘 다 구
 node build.mjs <덱>            # HTML → dist/<덱>.html (기본, self-contained)
 node build.mjs <덱> pdf        # PDF  (headless 브라우저 필요)
 node build.mjs <덱> pptx       # PPTX (headless 브라우저 필요)
+node build.mjs <덱> png        # 슬라이드별 PNG → dist/<덱>.shots/slide.NNN.png (시각 검토·미리보기, 브라우저 필요)
 node build.mjs <그룹>          # 그룹 하위 덱 전부 (예: study/docker)
 node build.mjs all             # decks/** 전부 (중첩 재귀)
 node build.mjs <덱> --serve    # 라이브 뷰어 (--port=N, 기본 4000 · --no-open 으로 자동 열기 끄기)
@@ -107,7 +108,7 @@ node build.mjs <덱> --serve    # 라이브 뷰어 (--port=N, 기본 4000 · --n
   **시작 시 브라우저 새 창을 자동으로 연다**(크로미움 계열 `--new-window`, 못 찾으면 OS 기본 열기 폴백 — WSL이면 `explorer.exe`). 끄려면 `--no-open`.
   현재 슬라이드는 URL 해시로 유지(1페이지로 안 튕김). 디스크의 `dist/*.html`은 항상 깨끗(리로드 코드는 서버 응답에만).
   덱 1개만 대상. **편집 중엔 `--serve`, 내보낼 땐 일반 빌드.**
-- **PDF/PPTX 브라우저**: 빌드가 `CHROME_PATH` → PATH의 chromium/chrome → (WSL이면) Windows Chrome/Edge 순으로 자동 탐색해 marp에 넘긴다. 못 찾거나 실행 실패 시 cryptic 트레이스 대신 **설치/`CHROME_PATH` 안내**를 띄우고 중단(HTML은 브라우저 없이 됨). WSL→Windows 브라우저는 네트워크로 실패할 수 있어 리눅스 chromium 설치가 가장 안정적.
+- **PDF/PPTX/PNG 브라우저**: 빌드가 `CHROME_PATH` → PATH의 chromium/chrome → **로컬 `./chrome/`**(`npx @puppeteer/browsers install chrome`로 받은 것·gitignore) → (WSL이면) Windows Chrome/Edge 순으로 자동 탐색해 marp에 넘긴다. 못 찾거나 실행 실패 시 cryptic 트레이스 대신 **설치/`CHROME_PATH` 안내**를 띄우고 중단(HTML은 브라우저 없이 됨). WSL→Windows 브라우저는 headless 실행이 자주 실패하니, 안 되면 `npx @puppeteer/browsers install chrome`로 리눅스 chromium을 받으면 자동 탐색된다(가장 안정적). `png`는 `/review`의 시각 검토 패스가 쓴다.
 - **출력 HTML 직접 수정 금지**(빌드 시 덮어쓰임). 미세조정은 브라우저 DevTools로 실험 후 값을 옮겨 적기 — 구조는 `themes/base.css`, 색은 팔레트(`themes/<name>.css`), 1회성은 슬라이드.
 - 단축 별칭(개인 `~/.bashrc`): `ppt <덱> [fmt]`(빌드) · `pv <덱>`(라이브 뷰어, 기본 포트 1122) · `pptime <덱>`(예상 발표 시간) · `use <덱>`(활성 덱 지정) · `deck`(현재 활성 덱). 덱 이름 Tab 자동완성.
 - **활성 덱(`decks/.active`)**: `use <덱>`으로 지정. 스킬·대화에서 덱을 생략하면("12번 슬라이드 …") 이 파일을 기본 대상으로 읽는다(없으면 유일/최근 덱, 그래도 모호하면 확인). `.active`는 `.`으로 시작해 빌드 탐색에서 제외됨.
