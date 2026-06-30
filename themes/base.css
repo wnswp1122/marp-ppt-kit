@@ -121,6 +121,17 @@ section.quote h1, section.quote blockquote, section.quote p { font-size: 1.8em; 
 /* 지표 강조 풀슬라이드: <!-- _class: metrics --> (가운데 큰 숫자) */
 section.metrics { justify-content: center; align-items: center; text-align: center; }
 
+/* 스포트라이트: 배경(캡처)을 죽이고 그 위 다크 카드(.callout)로 한 포인트만 살린다.
+   배경은 Marp 배경 필터로 죽인다 → ![bg blur:3px grayscale brightness:.5](assets/x.png)
+   같은 캡처에 카드만 1→2→3 으로 바꿔 단계별 빌드업(progressive disclosure).
+   카드를 우측에 두려면: <!-- _class: spotlight right --> */
+/* Marp는 배경 이미지가 있으면 섹션을 advanced-background로 쪼개 align-items 가 안 먹는다.
+   → 콜아웃 가로 배치는 margin auto 로(어디서든 동작). 기본 좌측, .center 가운데, .right 우측. */
+section.spotlight { justify-content: center; text-align: left; }
+section.spotlight .callout { margin-right: auto; }
+section.spotlight.center .callout { margin-left: auto; margin-right: auto; }
+section.spotlight.right  .callout { margin-left: auto; margin-right: 0; }
+
 /* ── 컴포넌트 (slide당 여러 개 · <div class="이름">) ──────────────── */
 
 /* 어둡게/강조 박스 */
@@ -128,6 +139,37 @@ section.metrics { justify-content: center; align-items: center; text-align: cent
 .box.accent { border-color: var(--accent); }
 .box.warn   { border-color: var(--warn); }
 .box.danger { border-color: var(--danger); }
+.box.ok     { border-color: var(--accent-2); }
+/* 채운 틴트 박스 — before/after·비교쌍용(.box 는 테두리만, .tint 는 옅은 배경 채움). 색은 변형과 조합: box tint danger */
+.box.tint        { background: color-mix(in srgb, var(--accent)   12%, var(--bg)); }
+.box.tint.warn   { background: color-mix(in srgb, var(--warn)     14%, var(--bg)); }
+.box.tint.danger { background: color-mix(in srgb, var(--danger)   14%, var(--bg)); }
+.box.tint.ok     { background: color-mix(in srgb, var(--accent-2) 14%, var(--bg)); }
+/* 틴트 박스 안 큰 숫자(h1)는 의미색으로 — before/after 대비 */
+.box.tint.danger h1 { color: var(--danger); }
+.box.tint.ok h1     { color: var(--accent-2); }
+
+/* 콜아웃 카드 — 죽인 배경/캡처 위에 띄우는 다크 카드. spotlight 레이아웃과 함께. <div class="callout"> 또는 ::: callout */
+.callout {
+  max-width: 62%;
+  background: var(--callout-bg, #161d2b);
+  color: var(--callout-fg, #f2f5fb);
+  border-radius: 14px; padding: .9em 1.3em;
+  box-shadow: 0 16px 46px rgba(0, 0, 0, .42);
+}
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child  { margin-bottom: 0; }
+.callout h1, .callout h2, .callout h3 { color: var(--callout-fg, #f2f5fb); border: none; }
+.callout strong { color: var(--warn); }   /* 다크 카드 위 강조는 오렌지 팝(어느 팔레트서도 보이게) */
+/* "1 / 3" 단계 배지 — callout 맨 윗줄 또는 단독. ::: 안에서 `1 / 3 {.step}` */
+.step { color: var(--warn); font-weight: 800; font-size: .7em; letter-spacing: .14em; }
+
+/* 포커스 박스 — 캡처/이미지의 한 영역을 강조색 외곽선으로 가둔다. 텍스트엔 `중요{.focus}`, 블록엔 ::: focus */
+.focus {
+  display: inline-block;
+  border: 2.5px solid var(--warn); border-radius: 8px; padding: .1em .35em;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--warn) 18%, transparent);
+}
 
 /* 2단 그리드: <div class="cols"> ... </div> */
 .cols  { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5em; }

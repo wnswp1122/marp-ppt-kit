@@ -1,0 +1,25 @@
+/* @theme editorial */
+/* 팔레트: editorial — 라이트 에디토리얼. 흰 배경 + 네이비 잉크 + 오렌지 1포인트 + 초록(긍정).
+   기술/IR 발표용. "강조색은 오렌지 하나"가 원칙 → 제목·굵게는 네이비(--accent)로 차분하게,
+   단 하나의 팝은 형광펜·단계배지·포커스(--warn=오렌지)로만 준다. 다크 콜아웃 카드와 궁합.
+   구조는 themes/base.css. 색·폰트만 여기 :root 에. */
+
+@import 'default';
+
+:root {
+  --bg:        #fdfdfe;
+  --bg-soft:   #f1f4f9;
+  --fg:        #1f2d44;
+  --fg-muted:  #5f6b7a;
+  --accent:    #17294a;   /* 네이비 잉크 = 제목·굵게·링크(구조색, 시끄럽지 않게) */
+  --accent-2:  #1a8a55;   /* 초록 = em·긍정 지표·box ok */
+  --warn:      #e07b12;   /* 오렌지 = 단 하나의 시그니처 팝(형광펜·.step·.focus·box warn) */
+  --danger:    #d23a3a;
+  --border:    #e2e7ef;
+  --code-bg:   #f1f4f9;
+  --callout-bg: #16213a;  /* 다크 콜아웃 카드 — 라이트 배경 위에 떠 보이게 */
+  --callout-fg: #f3f6fc;
+  --cover-grad: linear-gradient(135deg, #ffffff 0%, #eaf0f8 100%);
+  --font-sans: "Pretendard", "Inter", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "D2Coding", "Fira Code", monospace;
+}

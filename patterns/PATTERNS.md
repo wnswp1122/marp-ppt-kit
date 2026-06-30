@@ -9,7 +9,7 @@
 
 ---
 
-# A. 레이아웃 (12종)
+# A. 레이아웃 (13종)
 
 PowerPoint의 "슬라이드 레이아웃/마스터"에 해당. 슬라이드 맨 위에 `<!-- _class: 이름 -->`.
 
@@ -27,6 +27,7 @@ PowerPoint의 "슬라이드 레이아웃/마스터"에 해당. 슬라이드 맨 
 | 10 | `metrics` | 지표 강조 (큰 숫자) |
 | 11 | `blank` | 빈/자유 캔버스 |
 | 12 | `end` | 마무리/CTA |
+| 13 | `spotlight` | 배경 캡처를 죽이고 다크 카드(`.callout`)로 한 포인트 |
 
 ### 표지 · 섹션 · 목차
 ```markdown
@@ -112,6 +113,24 @@ PowerPoint의 "슬라이드 레이아웃/마스터"에 해당. 슬라이드 맨 
 ### 질문 환영 · github.com/me
 ```
 
+### 스포트라이트 (배경 죽이고 카드)
+캡처/대시보드를 **흑백·블러로 죽이고** 그 위 다크 카드(`.callout`)로 한 포인트만 살린다. 같은 캡처에 카드만 1→2→3 으로 바꿔 **단계별 빌드업**(WhaTap 덱 패턴).
+```markdown
+<!-- _class: spotlight right -->     <!-- 카드 위치: 기본 좌 · spotlight center · spotlight right -->
+
+![bg blur:3px grayscale brightness:.5](assets/dashboard.png)   <!-- 배경 죽이기 = Marp 배경 필터 -->
+
+::: callout
+1 / 3 {.step}
+
+## DB Connection 26.2초
+
+mysql jdbc 획득 대기 — **거의 전부가 여기** 묶임
+:::
+```
+- 배경은 **Marp 배경 필터**로 죽인다: `blur:Npx` · `grayscale` · `brightness:.5` · `sepia` 등 조합(이미지는 `assets/`에 두면 빌드가 인라인).
+- `.callout`은 spotlight 없이 일반 슬라이드에서도 떠 있는 카드로 쓸 수 있다. 데모: `decks/showcase` 14·15번.
+
 ---
 
 # B. 컴포넌트 (레이아웃 안에 끼우는 부품)
@@ -124,7 +143,43 @@ PowerPoint의 "슬라이드 레이아웃/마스터"에 해당. 슬라이드 맨 
 
 </div>
 ```
-변형: `box accent`(파랑) · `box warn`(주황) · `box danger`(빨강)
+변형(테두리색): `box accent`(파랑) · `box warn`(주황) · `box danger`(빨강) · `box ok`(초록)
+**채운 틴트** — before/after·비교쌍에. 테두리 변형과 조합: `box tint danger`(연빨강) · `box tint ok`(연초록) · `box tint warn` · `box tint`(연파랑). 틴트 박스 안 `# 큰숫자`는 의미색 자동(danger=빨강·ok=초록).
+```markdown
+<div class="cols">
+
+::: box tint danger
+**개선 전** · p95
+
+# 3.0s
+:::
+::: box tint ok
+**개선 후** · p95
+
+# 0.3s
+:::
+
+</div>
+```
+
+## 콜아웃 카드 — `.callout` (+ `.step` 배지)
+죽인 배경/캡처 위에 띄우는 **다크 카드**. `spotlight` 레이아웃(위 A)과 함께, 또는 일반 슬라이드 위에 단독으로.
+```markdown
+::: callout
+1 / 3 {.step}        <!-- "1 / 3" 단계 배지(주황). 생략 가능 -->
+
+## 한 줄 결론
+
+부연 설명 — **핵심**만
+:::
+```
+색은 `--callout-bg`/`--callout-fg`(기본 다크 네이비, 어느 팔레트에서도 떠 보이게). 데모: showcase 14번.
+
+## 포커스 박스 — `.focus`
+캡처/이미지의 한 영역(또는 인라인 구절)을 **강조색 외곽선**으로 가둔다.
+```markdown
+트레이스에서 <span class="focus">느린 SQL 한 줄</span> 을 잡으면 끝.
+```
 
 ## 지표 카드 — `.metric` (+ `.cols3`)
 ```markdown
