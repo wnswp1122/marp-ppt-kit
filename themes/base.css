@@ -13,6 +13,10 @@ section {
   font-size: 26px;
   padding: 70px 80px;
   line-height: 1.55;
+  /* flex 컨테이너 → 레이아웃들의 justify-content/align-items 가 실제로 동작.
+     기본 column(세로 흐름) = content 등 일반 본문은 블록처럼 보이고, cover/quote/metrics 등은 가운데정렬이 살아난다. */
+  display: flex;
+  flex-direction: column;
 }
 
 h1 { font-size: 1.9em; color: var(--fg); font-weight: 800; letter-spacing: -0.02em; }
