@@ -462,7 +462,8 @@ function buildDeck(deck, fmt, theme = null) {
     if (/^\/mnt\/[a-z]\//.test(browser)) console.log(`  · WSL: Windows 브라우저 사용 (${browser.split('/').pop()})`);
   }
   try {
-    execFileSync('npx', ['marp', tmp, '-c', CONFIG, ...THEME_ARGS, ...FMT[fmt], '-o', out], { stdio: ['ignore', 'inherit', 'inherit'], env });
+    // cwd: root → 프로젝트 밖(별칭으로 임의 폴더)에서 실행해도 npx가 marp를 프로젝트 node_modules에서 찾는다.
+    execFileSync('npx', ['marp', tmp, '-c', CONFIG, ...THEME_ARGS, ...FMT[fmt], '-o', out], { stdio: ['ignore', 'inherit', 'inherit'], env, cwd: root });
   } catch (e) {
     if (fmt !== 'html') { browserHelp(); return false; }   // 브라우저 실행 실패 → cryptic 대신 안내
     throw e;

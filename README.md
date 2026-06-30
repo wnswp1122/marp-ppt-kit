@@ -123,15 +123,24 @@ HTML 열기는 `explorer.exe dist/<덱>.html`.
 
 > `--serve` 모드는 시작 시 **브라우저 새 창을 자동으로 연다**(OS 자동 감지, WSL이면 `explorer.exe`). 끄려면 `--no-open`.
 
-### (선택) 셸 별칭
+### (선택) 셸 단축 명령 — `aliases.sh`
 
-`~/.bashrc`에 함수로 넣으면 짧아진다(덱·테마 Tab 자동완성도 가능). 예:
+레포에 포함된 [`aliases.sh`](aliases.sh)를 셸 설정에서 한 줄 `source` 하면 단축 명령이 살아난다. **bash·zsh / Linux·macOS·WSL·Git Bash** 지원, 경로 자동감지(어디에 clone하든 OK):
 
 ```bash
-ppt() { node ~/경로/marp-ppt-kit/build.mjs "$@"; }   # ppt <덱> [테마|fmt]   예: ppt example editorial
-pv()  { ppt "$@" --serve --port=1122 --no-open; }    # 라이브 뷰어 (새창 안 띄움)  예: pv example editorial
+# ~/.bashrc (또는 ~/.zshrc) 에 추가 후 새 셸 열기
+source /클론한_경로/marp-ppt-kit/aliases.sh
 ```
-> `po`(빌드된 HTML 열기)·`use`/`deck`(활성 덱) 같은 함수도 취향껏. 저장소엔 개인 별칭을 커밋하지 않는다 — 본인 환경에서만.
+
+| 명령 | 하는 일 |
+|------|---------|
+| `ppt <덱> [테마\|fmt]` | 빌드 — 예: `ppt example editorial` · `ppt deckname pdf` |
+| `pv <덱> [테마]` | 라이브 뷰어 (저장 시 자동 재빌드 · 새창 안 띄움) |
+| `po <덱> [테마]` | 빌드된 `dist/<덱>[.테마].html` 을 OS 기본 브라우저로 열기 |
+| `use <덱>` / `deck` | 활성 덱 지정 / 확인 |
+| `pptime <덱>` | 대본(`notes.md`) 기반 예상 발표시간 |
+
+> 덱·테마 **Tab 자동완성**(bash). Windows 네이티브 PowerShell/cmd는 미지원 — WSL 또는 Git Bash 사용. 빌드는 별칭 없이 `node build.mjs …`로도 그대로 동작.
 
 ---
 
