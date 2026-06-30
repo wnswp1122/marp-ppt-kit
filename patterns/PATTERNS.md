@@ -259,7 +259,7 @@ flowchart TD
   Q -->|실패| E[401]
 ```
 ````
-> mermaid.js는 로컬 설치(`npm i mermaid`) 시 인라인(self-contained), 없으면 CDN 로드. 데모: `decks/example` 14번.
+> mermaid.js는 로컬 설치(`npm i mermaid`) 시 인라인(self-contained), 없으면 CDN 로드. 데모: `decks/example` 17번.
 
 **③ 미리 렌더한 SVG/PNG** (모든 포맷에서 보여야 할 때) — `assets/`에 넣고 `![w:900](assets/arch.svg)`.
 
@@ -309,4 +309,4 @@ flowchart TD
 **언제 공용으로 뺄까 (승격 기준):** "내용(말)이 빠진 채 다른 발표에서도 또 쓸 일반적 모양"이면 공용으로.
 ①2~3번 반복 ②내용 독립 ③재사용 범위 ④한 단어 이름 가치 ⑤일관성. 너무 이른 추상화 금물(3번째 쓸 때 승격).
 
-> 데모는 `decks/example` 덱에서 모든 레이아웃·컴포넌트를 한 장씩 확인 가능: `node build.mjs example` → `dist/example.<테마>.html`(5테마)
+> 데모는 `decks/example` 덱에서 모든 레이아웃·컴포넌트를 한 장씩 확인 가능: `node build.mjs example` → `dist/example.html`(기본 tech). 다른 테마는 `node build.mjs example <테마>`.

@@ -4,16 +4,14 @@
   "description": "마크다운(Marp) 기반 발표자료 제작 툴킷 — 디자인 시스템 + 테마 교체 + Claude Code 워크플로우. HTML/PDF/PPTX 출력.",
   "type": "module",
   "license": "MIT",
+  "keywords": ["marp", "markdown", "slides", "presentation", "theme", "claude-code"],
+  "author": "",
   "scripts": {
     "build": "node build.mjs example",
     "build:all": "node build.mjs all",
     "pdf": "node build.mjs example pdf",
     "pptx": "node build.mjs example pptx"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "devDependencies": {
     "@marp-team/marp-cli": "^4.4.0",
     "markdown-it-attrs": "^5.0.0",

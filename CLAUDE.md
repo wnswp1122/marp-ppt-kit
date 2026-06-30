@@ -10,10 +10,10 @@
 ```
 ppt/                         ← 작업 루트 (테마·패턴·빌드 공유)
 ├── themes/base.css          # 디자인 시스템 구조 (레이아웃 + 컴포넌트 + 동적) — 색 없음·var()만
-├── themes/<name>.css        # 팔레트 = 색·폰트(:root)만. tech(다크)·light·mono·aurora
+├── themes/<name>.css        # 팔레트 = 색·폰트(:root)만. tech(다크)·light·mono·aurora·editorial
 │                            #   빌드가 [팔레트 + base]를 합쳐 Marp 테마 생성 → 슬라이드 `theme:`로 선택
 ├── patterns/PATTERNS.md     # 레이아웃·컴포넌트 카탈로그 ← 작성 전 필독
-├── templates/               # _header.md · brief.md · slide.md 템플릿
+├── templates/               # _header.md · brief.md · slide.md · notes.md 템플릿
 ├── build.mjs                # 빌드 파이프라인 (HTML/PDF/PPTX + serve 뷰어)
 ├── decks/example/           # 레이아웃·컴포넌트 카탈로그(살아있는 스타일가이드 = 옛 showcase)
 │                            #   기본 테마로 빌드, --theme=/PPT_THEME 로 테마 바꿔 확인 (테마 검증 하니스)
@@ -52,11 +52,11 @@ PowerPoint의 "슬라이드 레이아웃 + 도형"과 같은 모델. 둘 다 구
 
 **테마 = 팔레트 교체.** 구조(`base.css`)는 그대로 두고 색·폰트만 담은 팔레트(`themes/<name>.css`의 `:root`)를 갈아끼우면 테마가 바뀐다. 빌드가 `[팔레트 + base]`를 합쳐 `.build/themes/`에 Marp 테마를 만들고 전부 등록 → 덱의 `_header.md` `theme:` 가 하나를 고른다. 기본 5종: `tech`(다크)·`light`(화이트)·`mono`(에디토리얼/세리프)·`aurora`(비비드)·`editorial`(네이비+오렌지 1포인트). **새 테마 = `tech.css` 복사 → `/* @theme 새이름 */` + `:root` 색만 수정.** 같은 내용을 테마별로 확인하는 하니스가 `decks/example/`(덱 하나): 기본 테마로 빌드하거나 `--theme=<이름>`/`PPT_THEME`로 테마를 바꿔 본다(`node build.mjs example --theme=editorial` → `dist/example.editorial.html`, `pv example --theme=editorial`로 라이브). 테마 지정은 `_header.md`의 `theme:`(기본) 또는 `--theme=`/`PPT_THEME`(override) 한 곳.
 
-- **레이아웃** = `<!-- _class: 이름 -->` 한 줄, **슬라이드당 1개**. (CSS: `section.이름`) — 12종:
+- **레이아웃** = `<!-- _class: 이름 -->` 한 줄, **슬라이드당 1개**. (CSS: `section.이름`) — 13종:
   `cover`(표지) · `section`(챕터구분) · `agenda`(목차) · `content`(기본본문) · `two`(좌우2단) ·
-  `compare`(비교) · `imgtext`(이미지+설명) · `full`(풀스크린) · `quote`(인용) · `metrics`(지표) · `blank`(빈/자유) · `end`(마무리)
-- **컴포넌트** = `<div class="이름">`, 한 슬라이드에 **여러 개**. (CSS: `.이름`) — `.box`(accent/warn/danger) · `.metric`+`.cols3` · `.cols` · 표 · 코드블록 · 동적(`.count`·`.bar`)
-- 전체 데모: `decks/example` (`node build.mjs example` → 5테마 빌드, `dist/example.<테마>.html`).
+  `compare`(비교) · `imgtext`(이미지+설명) · `full`(풀스크린) · `quote`(인용) · `metrics`(지표) · `blank`(빈/자유) · `end`(마무리) · `spotlight`(배경 죽이고 다크 콜아웃)
+- **컴포넌트** = `<div class="이름">`, 한 슬라이드에 **여러 개**. (CSS: `.이름`) — `.box`(accent/warn/danger/ok·tint) · `.callout`+`.step` · `.focus` · `.metric`+`.cols3` · `.cols` · 표 · 코드블록 · 동적(`.count`·`.bar`·`.sim`)
+- 전체 데모: `decks/example` (`node build.mjs example` → 기본 tech `dist/example.html`; 다른 테마는 `node build.mjs example <테마>`).
 - **컴포넌트 승격 기준:** 내용 빠진 채 다른 발표에서도 또 쓸 일반적 모양이면 공용으로(2~3번 반복·이름 가치 있을 때). 1회성은 슬라이드 인라인.
 
 ## 워크플로우 (스킬 = 모드)
