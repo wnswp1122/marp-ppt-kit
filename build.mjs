@@ -565,11 +565,19 @@ const portArg = rawArgs.find(a => a.startsWith('--port='));
 const PORT = portArg ? (parseInt(portArg.split('=')[1]) || 4000) : 4000;
 // 테마 override: --theme=<이름> > PPT_THEME 환경변수. 있으면 _header의 theme 무시하고 이 테마로 → dist/<deck>.<theme>.html.
 const themeArg = rawArgs.find(a => a.startsWith('--theme='));
-const cliTheme = themeArg ? themeArg.split('=')[1] : (process.env.PPT_THEME || null);
 const positional = rawArgs.filter(a => !a.startsWith('--'));
 const arg = positional[0];
-const fmt = (positional[1] || 'html').toLowerCase();
-if (!FMT[fmt]) { console.error(`✗ 알 수 없는 포맷: ${fmt} (html|pdf|pptx|png)`); process.exit(1); }
+// 덱 뒤 positional 인자 = 포맷(html|pdf|pptx|png) 또는 테마명(팔레트). 순서 무관 분류 →
+// `ppt example editorial`·`pv example editorial`처럼 --theme 없이 테마를 바로 적을 수 있다.
+let fmt = 'html', posTheme = null;
+for (const p of positional.slice(1)) {
+  const v = p.toLowerCase();
+  if (FMT[v]) fmt = v;
+  else if (p !== 'base' && existsSync(join(THEMES_DIR, `${p}.css`))) posTheme = p;
+  else { console.error(`✗ 알 수 없는 인자: ${p} (포맷 html|pdf|pptx|png 또는 테마명)`); process.exit(1); }
+}
+// 테마 우선순위: --theme= > PPT_THEME > 덱 뒤 positional 테마.
+const cliTheme = themeArg ? themeArg.split('=')[1] : (process.env.PPT_THEME || posTheme || null);
 
 // decks/ 이하에서 slides/ 폴더를 가진 디렉토리(=덱)를 재귀로 찾는다.
 // slides/가 없으면 그룹 폴더로 보고 더 깊이 탐색. .으로 시작하는 폴더(.obsidian 등)는 건너뜀.
