@@ -15,8 +15,8 @@ ppt/                         ← 작업 루트 (테마·패턴·빌드 공유)
 ├── patterns/PATTERNS.md     # 레이아웃·컴포넌트 카탈로그 ← 작성 전 필독
 ├── templates/               # _header.md · brief.md · slide.md 템플릿
 ├── build.mjs                # 빌드 파이프라인 (HTML/PDF/PPTX + serve 뷰어)
-├── decks/showcase/          # 레이아웃 12종 데모 덱 (살아있는 스타일가이드)
-├── decks/example/<theme>/   # 같은 내용을 테마별로 빌드(dark·light·mono·aurora) = 테마 검증 하니스
+├── decks/example/           # 레이아웃·컴포넌트 카탈로그(살아있는 스타일가이드 = 옛 showcase)
+│                            #   _themes.txt에 적힌 5테마로 빌드 → dist/example.<테마>.html (테마 검증 하니스)
 └── decks/<발표이름>/         ← 발표 1개 = slides/ 를 가진 디렉토리
     ├── _header.md           #  Marp 전역 설정 (theme·paginate·title) — 빌드가 맨 앞 1회 주입
     ├── brief.md             #  상담 결과 = 슬라이드별 내용+디자인 계획표
@@ -50,13 +50,13 @@ ppt/                         ← 작업 루트 (테마·패턴·빌드 공유)
 
 PowerPoint의 "슬라이드 레이아웃 + 도형"과 같은 모델. 둘 다 구조는 `themes/base.css`(색은 var()로만 참조)에 있고 카탈로그는 `patterns/PATTERNS.md`.
 
-**테마 = 팔레트 교체.** 구조(`base.css`)는 그대로 두고 색·폰트만 담은 팔레트(`themes/<name>.css`의 `:root`)를 갈아끼우면 테마가 바뀐다. 빌드가 `[팔레트 + base]`를 합쳐 `.build/themes/`에 Marp 테마를 만들고 전부 등록 → 덱의 `_header.md` `theme:` 가 하나를 고른다. 기본 4종: `tech`(다크)·`light`(화이트)·`mono`(에디토리얼/세리프)·`aurora`(비비드). **새 테마 = `tech.css` 복사 → `/* @theme 새이름 */` + `:root` 색만 수정.** 같은 내용을 테마별로 빌드해 검증하는 하니스가 `decks/example/<theme>/`(`node build.mjs example`).
+**테마 = 팔레트 교체.** 구조(`base.css`)는 그대로 두고 색·폰트만 담은 팔레트(`themes/<name>.css`의 `:root`)를 갈아끼우면 테마가 바뀐다. 빌드가 `[팔레트 + base]`를 합쳐 `.build/themes/`에 Marp 테마를 만들고 전부 등록 → 덱의 `_header.md` `theme:` 가 하나를 고른다. 기본 5종: `tech`(다크)·`light`(화이트)·`mono`(에디토리얼/세리프)·`aurora`(비비드)·`editorial`(네이비+오렌지 1포인트). **새 테마 = `tech.css` 복사 → `/* @theme 새이름 */` + `:root` 색만 수정.** 같은 내용을 테마별로 빌드해 검증하는 하니스가 `decks/example/`: 덱 하나의 콘텐츠를 `_themes.txt`에 적힌 테마들로 빌드(`node build.mjs example` → `dist/example.<테마>.html`). 테마는 한 곳에서 지정 — `_header.md`의 `theme:`(기본) · `--theme=<이름>`/`PPT_THEME`(override) · `_themes.txt`(목록).
 
 - **레이아웃** = `<!-- _class: 이름 -->` 한 줄, **슬라이드당 1개**. (CSS: `section.이름`) — 12종:
   `cover`(표지) · `section`(챕터구분) · `agenda`(목차) · `content`(기본본문) · `two`(좌우2단) ·
   `compare`(비교) · `imgtext`(이미지+설명) · `full`(풀스크린) · `quote`(인용) · `metrics`(지표) · `blank`(빈/자유) · `end`(마무리)
 - **컴포넌트** = `<div class="이름">`, 한 슬라이드에 **여러 개**. (CSS: `.이름`) — `.box`(accent/warn/danger) · `.metric`+`.cols3` · `.cols` · 표 · 코드블록 · 동적(`.count`·`.bar`)
-- 전체 데모: `decks/showcase` (`node build.mjs showcase`).
+- 전체 데모: `decks/example` (`node build.mjs example` → 5테마 빌드, `dist/example.<테마>.html`).
 - **컴포넌트 승격 기준:** 내용 빠진 채 다른 발표에서도 또 쓸 일반적 모양이면 공용으로(2~3번 반복·이름 가치 있을 때). 1회성은 슬라이드 인라인.
 
 ## 워크플로우 (스킬 = 모드)
@@ -106,6 +106,8 @@ node build.mjs <덱> png        # 슬라이드별 PNG → dist/<덱>.shots/slide
 node build.mjs <그룹>          # 그룹 하위 덱 전부 (예: study/docker)
 node build.mjs all             # decks/** 전부 (중첩 재귀)
 node build.mjs <덱> --serve    # 라이브 뷰어 (--port=N, 기본 4000 · --no-open 으로 자동 열기 끄기)
+node build.mjs <덱> --theme=editorial  # _header 테마 무시·그 테마로 → dist/<덱>.editorial.html (PPT_THEME=editorial 도 동일)
+                                       #   덱에 _themes.txt(한 줄에 테마 하나) 있으면 node build.mjs <덱> 가 목록 전부를 빌드
 ```
 - **`--serve`**: 로컬 서버 + `slides/`·`themes/`·`_header.md` 감시 → 저장 시 자동 재빌드 + 브라우저 자동 새로고침.
   **시작 시 브라우저 새 창을 자동으로 연다**(크로미움 계열 `--new-window`, 못 찾으면 OS 기본 열기 폴백 — WSL이면 `explorer.exe`). 끄려면 `--no-open`.

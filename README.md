@@ -8,7 +8,7 @@
 
 ```bash
 npm install
-node build.mjs showcase        # → dist/showcase.html (레이아웃 12종 데모)
+node build.mjs example         # → dist/example.<테마>.html (레이아웃·컴포넌트 카탈로그 5테마)
 ```
 
 ---
@@ -43,12 +43,12 @@ git clone <이 레포 주소>
 cd marp-ppt-kit
 npm install
 
-# 데모 빌드 — 살아있는 스타일가이드
-node build.mjs showcase             # 레이아웃 12종
-node build.mjs example              # 같은 내용을 테마 4종으로
+# 데모 빌드 — 살아있는 스타일가이드 (레이아웃·컴포넌트 카탈로그 × 5테마)
+node build.mjs example                    # 5테마 전부 → dist/example.<테마>.html
+node build.mjs example --theme=editorial  # 한 테마만 (PPT_THEME=editorial 도 동일)
 
 # 편집 중엔 라이브 뷰어 (저장 시 자동 재빌드 + 브라우저 새로고침)
-node build.mjs showcase --serve     # --port=N 으로 포트 변경
+node build.mjs example --serve            # --port=N 으로 포트 변경
 
 # 출력
 node build.mjs <덱> pdf             # PDF  (Chrome 필요)
@@ -167,8 +167,8 @@ marp-ppt-kit/
 ├── templates/               # _header.md · brief.md · slide.md · notes.md 템플릿
 ├── build.mjs                # 빌드 파이프라인 (HTML/PDF/PPTX + serve 뷰어)
 ├── marp.config.mjs          # Marp 엔진 확장 (markdown-it 플러그인 3종)
-├── decks/showcase/          # 레이아웃 12종 데모 (살아있는 스타일가이드)
-├── decks/example/<theme>/   # 같은 내용을 테마별로 빌드 = 테마 검증 하니스
+├── decks/example/           # 레이아웃·컴포넌트 카탈로그(스타일가이드 = 옛 showcase)
+│                            #   _themes.txt로 5테마 빌드 = 테마 검증 하니스
 └── decks/<발표이름>/         # 발표 1개 = slides/ 를 가진 디렉토리
     ├── _header.md           #   Marp 전역 설정 (theme·paginate·title)
     ├── brief.md             #   상담 결과 = 슬라이드별 내용+디자인 계획표

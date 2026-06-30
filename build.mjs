@@ -398,14 +398,18 @@ function lintSlides(slidesDir, files) {
   for (const w of warn) console.warn(`    · ${w}`);
 }
 
-function buildDeck(deck, fmt) {
+function buildDeck(deck, fmt, theme = null) {
   const deckDir = join(root, 'decks', deck);
   const slidesDir = join(deckDir, 'slides');
   if (!existsSync(slidesDir)) { console.error(`✗ slides 폴더 없음: ${slidesDir}`); return false; }
   mkdirSync(join(deckDir, 'assets'), { recursive: true });  // 이미지 둘 폴더 자동 보장(수동 생성 불필요)
 
   const headerPath = join(deckDir, '_header.md');
-  const header = existsSync(headerPath) ? readFileSync(headerPath, 'utf8').trim() : DEFAULT_HEADER;
+  let header = existsSync(headerPath) ? readFileSync(headerPath, 'utf8').trim() : DEFAULT_HEADER;
+  // 테마 override(--theme=·PPT_THEME·_themes.txt): _header의 theme: 줄을 덮어쓴다(없으면 marp: true 뒤에 주입).
+  if (theme) header = /^theme:\s*\S+/m.test(header)
+    ? header.replace(/^theme:\s*\S+.*$/m, `theme: ${theme}`)
+    : header.replace(/^(marp:\s*true.*)$/mi, `$1\ntheme: ${theme}`);
 
   // slides/ 안의 .md를 이름순으로(번호 prefix 기준) 정렬, _로 시작하는 건 제외
   const files = readdirSync(slidesDir)
@@ -433,11 +437,13 @@ function buildDeck(deck, fmt) {
   writeFileSync(tmp, combined);
 
   const ext = fmt === 'html' ? 'html' : fmt;
-  // png(--images)은 슬라이드 1장 = 파일 1개 → 전용 폴더에 slide.NNN.png 로. 그 외는 dist/<deck>.<ext> 단일 파일.
-  const out = fmt === 'png' ? join(root, 'dist', `${deck}.shots`, 'slide.png') : join(root, 'dist', `${deck}.${ext}`);
-  const outLabel = fmt === 'png' ? `dist/${deck}.shots/slide.NNN.png` : `dist/${deck}.${ext}`;
+  // 테마 override 시 파일명에 테마를 붙여 공존(dist/<deck>.<theme>.html). 기본은 dist/<deck>.<ext>.
+  const name = theme ? `${deck}.${theme}` : deck;
+  // png(--images)은 슬라이드 1장 = 파일 1개 → 전용 폴더에 slide.NNN.png 로. 그 외는 단일 파일.
+  const out = fmt === 'png' ? join(root, 'dist', `${name}.shots`, 'slide.png') : join(root, 'dist', `${name}.${ext}`);
+  const outLabel = fmt === 'png' ? `dist/${name}.shots/slide.NNN.png` : `dist/${name}.${ext}`;
   mkdirSync(dirname(out), { recursive: true });
-  console.log(`▸ ${deck}: ${files.length}장 → ${outLabel}`);
+  console.log(`▸ ${deck}${theme ? ` [${theme}]` : ''}: ${files.length}장 → ${outLabel}`);
   warnOverflow(slidesDir, files);   // 내용 넘침 정적 검사 (추정 경고만, 빌드는 진행)
   lintSlides(slidesDir, files);     // 빌드 가드 3종 (---·번호·data-expr)
   // 이미지 인라인 용량 경고: self-contained HTML이 너무 무거워지면(공유·로딩 부담) 알림
@@ -499,8 +505,8 @@ function buildDeck(deck, fmt) {
 
 // 라이브 뷰어: 덱을 HTML로 빌드해 로컬 서버로 띄우고, 소스 변경 시 자동 재빌드 + 브라우저 자동 새로고침.
 // 새로고침해도 Marp가 현재 슬라이드를 URL 해시(#번호)에 저장하므로 보던 자리로 복귀한다.
-function serve(deck, port, open = true) {
-  const out = join(root, 'dist', `${deck}.html`);
+function serve(deck, port, open = true, theme = null) {
+  const out = join(root, 'dist', `${theme ? `${deck}.${theme}` : deck}.html`);
   // 서버 응답에만 끼우는 라이브리로드 클라이언트(빌드 산출물은 깨끗하게 유지)
   const LIVE = `<script>
 new EventSource('/__reload').addEventListener('reload',function(){location.reload();});
@@ -508,7 +514,7 @@ new EventSource('/__reload').addEventListener('reload',function(){location.reloa
 </body>`;
   const clients = [];
 
-  if (!buildDeck(deck, 'html')) process.exit(1);
+  if (!buildDeck(deck, 'html', theme)) process.exit(1);
 
   const server = createServer((req, res) => {
     if (req.url === '/__reload') {
@@ -540,7 +546,7 @@ new EventSource('/__reload').addEventListener('reload',function(){location.reloa
     clearTimeout(timer);
     timer = setTimeout(() => {
       try {
-        if (buildDeck(deck, 'html')) {
+        if (buildDeck(deck, 'html', theme)) {
           clients.forEach(c => c.write('event: reload\ndata: 1\n\n'));
           console.log('  ↻ 재빌드 완료 → 새로고침');
         }
@@ -557,6 +563,9 @@ const serveMode = rawArgs.includes('--serve');
 const noOpen = rawArgs.includes('--no-open');   // --serve 시 브라우저 자동 열기 끄기
 const portArg = rawArgs.find(a => a.startsWith('--port='));
 const PORT = portArg ? (parseInt(portArg.split('=')[1]) || 4000) : 4000;
+// 테마 override: --theme=<이름> > PPT_THEME 환경변수. 있으면 _header·_themes 무시하고 이 테마로.
+const themeArg = rawArgs.find(a => a.startsWith('--theme='));
+const cliTheme = themeArg ? themeArg.split('=')[1] : (process.env.PPT_THEME || null);
 const positional = rawArgs.filter(a => !a.startsWith('--'));
 const arg = positional[0];
 const fmt = (positional[1] || 'html').toLowerCase();
@@ -579,6 +588,17 @@ function findDecks(dir, rel = '') {
 }
 
 const decksDir = join(root, 'decks');
+
+// 덱이 빌드될 테마 목록: --theme/PPT_THEME override > _themes.txt(한 줄에 하나) > [null](=_header 기본 테마로 단일 빌드).
+function deckThemes(deck) {
+  if (cliTheme) return [cliTheme];
+  const f = join(decksDir, deck, '_themes.txt');
+  if (existsSync(f)) {
+    const list = readFileSync(f, 'utf8').split('\n').map(s => s.trim()).filter(s => s && !s.startsWith('#'));
+    if (list.length) return list;
+  }
+  return [null];
+}
 let targets;
 if (!arg || arg === 'all') {
   targets = findDecks(decksDir);
@@ -594,9 +614,9 @@ if (targets.length === 0) { console.error('✗ 빌드할 덱이 없습니다.');
 // 라이브 뷰어 모드: 덱 1개만 대상. (서버는 종료될 때까지 살아있으므로 process.exit 안 함)
 if (serveMode) {
   if (targets.length !== 1) { console.error(`✗ --serve는 덱 1개만 가능합니다 (대상: ${targets.length}개)`); process.exit(1); }
-  serve(targets[0], PORT, !noOpen);
+  serve(targets[0], PORT, !noOpen, cliTheme);
 } else {
   let ok = true;
-  for (const d of targets) ok = buildDeck(d, fmt) && ok;
+  for (const d of targets) for (const t of deckThemes(d)) ok = buildDeck(d, fmt, t) && ok;
   process.exit(ok ? 0 : 1);
 }

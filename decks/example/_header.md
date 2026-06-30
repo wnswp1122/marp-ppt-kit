@@ -2,6 +2,6 @@
 marp: true
 theme: tech
 paginate: true
-title: 테마 데모 — tech (다크)
+title: 레이아웃·컴포넌트·테마 쇼케이스
 transition: fade
 ---

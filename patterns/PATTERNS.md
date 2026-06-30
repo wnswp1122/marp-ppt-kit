@@ -129,7 +129,7 @@ mysql jdbc 획득 대기 — **거의 전부가 여기** 묶임
 :::
 ```
 - 배경은 **Marp 배경 필터**로 죽인다: `blur:Npx` · `grayscale` · `brightness:.5` · `sepia` 등 조합(이미지는 `assets/`에 두면 빌드가 인라인).
-- `.callout`은 spotlight 없이 일반 슬라이드에서도 떠 있는 카드로 쓸 수 있다. 데모: `decks/showcase` 14·15번.
+- `.callout`은 spotlight 없이 일반 슬라이드에서도 떠 있는 카드로 쓸 수 있다. 데모: `decks/example` 14·15번.
 
 ---
 
@@ -173,7 +173,7 @@ mysql jdbc 획득 대기 — **거의 전부가 여기** 묶임
 부연 설명 — **핵심**만
 :::
 ```
-색은 `--callout-bg`/`--callout-fg`(기본 다크 네이비, 어느 팔레트에서도 떠 보이게). 데모: showcase 14번.
+색은 `--callout-bg`/`--callout-fg`(기본 다크 네이비, 어느 팔레트에서도 떠 보이게). 데모: example 14번.
 
 ## 포커스 박스 — `.focus`
 캡처/이미지의 한 영역(또는 인라인 구절)을 **강조색 외곽선**으로 가둔다.
@@ -304,9 +304,9 @@ flowchart TD
 새로 자주 쓰는 패턴이 생기면:
 1. 위 형식으로 추가 (레이아웃이면 A, 부품이면 B)
 2. `themes/base.css`에 `section.이름`(레이아웃) 또는 `.이름`(컴포넌트) 클래스 추가 — 색은 직접 쓰지 말고 `var(--*)`로(모든 팔레트에서 자동으로 맞도록)
-3. 필요하면 `decks/showcase`에 데모 한 장 추가
+3. 필요하면 `decks/example`에 데모 한 장 추가
 
 **언제 공용으로 뺄까 (승격 기준):** "내용(말)이 빠진 채 다른 발표에서도 또 쓸 일반적 모양"이면 공용으로.
 ①2~3번 반복 ②내용 독립 ③재사용 범위 ④한 단어 이름 가치 ⑤일관성. 너무 이른 추상화 금물(3번째 쓸 때 승격).
 
-> 데모는 `decks/showcase` 덱에서 모든 레이아웃을 한 장씩 확인 가능: `node build.mjs showcase` → `dist/showcase.html`
+> 데모는 `decks/example` 덱에서 모든 레이아웃·컴포넌트를 한 장씩 확인 가능: `node build.mjs example` → `dist/example.<테마>.html`(5테마)

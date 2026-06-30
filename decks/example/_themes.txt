@@ -1,0 +1,8 @@
+# 이 덱(레이아웃·컴포넌트 카탈로그)을 빌드할 테마 목록 (한 줄에 하나).
+# node build.mjs example → 각 테마로 dist/example.<테마>.html 생성.
+# 특정 테마만: node build.mjs example --theme=editorial  (또는 PPT_THEME=editorial)
+tech
+light
+mono
+aurora
+editorial
