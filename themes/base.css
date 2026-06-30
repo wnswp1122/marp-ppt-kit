@@ -88,7 +88,7 @@ section.full h1 { font-size: 3em; }
 section.full img { width: 100%; height: 100%; object-fit: cover; }
 
 /* 좌우 분할: <!-- _class: two --> + 안에 <div> 두 개 */
-section.two { flex-direction: row; align-items: center; gap: 2em; }
+section.two { display: flex; flex-direction: row; align-items: center; gap: 2em; }
 section.two > * { flex: 1; min-width: 0; }
 
 /* 마무리/CTA: <!-- _class: end --> */
@@ -106,11 +106,11 @@ section.agenda ol li::before {
 }
 
 /* 비교: <!-- _class: compare --> + 안에 <div> 두 개 (좌 vs 우 패널) */
-section.compare { flex-direction: row; gap: 1.5em; align-items: stretch; justify-content: center; }
+section.compare { display: flex; flex-direction: row; gap: 1.5em; align-items: stretch; justify-content: center; }
 section.compare > * { flex: 1; min-width: 0; background: var(--bg-soft); border: 1px solid var(--border); border-radius: 12px; padding: 1em 1.3em; }
 
 /* 이미지+설명 좌우: <!-- _class: imgtext --> + <div>이미지</div><div>설명</div> */
-section.imgtext { flex-direction: row; align-items: center; gap: 2em; }
+section.imgtext { display: flex; flex-direction: row; align-items: center; gap: 2em; }
 section.imgtext > * { flex: 1; min-width: 0; }
 section.imgtext img { width: 100%; border-radius: 12px; }
 
