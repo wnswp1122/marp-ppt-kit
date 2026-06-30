@@ -45,7 +45,7 @@ argument-hint: <파일경로> [집중할 것]
 
 ## 5. 반영 + 시각 검증
 - **승인된 것만** 반영(색=`var()`, 기존 컨벤션 준수). 컴포넌트는 `PATTERNS.md`에도 카탈로그 등록.
-- 데모 한 장을 `decks/example`(스타일가이드 카탈로그)에 추가(선택). 새 테마면 `_themes.txt`에 한 줄 추가하면 5→6테마로 같이 검증됨.
+- 데모 한 장을 `decks/example`(스타일가이드 카탈로그)에 추가(선택). 새 테마는 `node build.mjs example --theme=<새이름>`(또는 `pv example --theme=<새이름>`)로 확인.
 - `node build.mjs <덱> png`로 렌더해 **눈으로 검증**(시각 검토 패스). 넘침·정렬·대비 확인.
 
 > 추출·반영은 **작성 패스**다. 끝나면 `/review`로 **별도 검증 패스**를 권장(self-approve 금지).

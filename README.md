@@ -8,7 +8,7 @@
 
 ```bash
 npm install
-node build.mjs example         # → dist/example.<테마>.html (레이아웃·컴포넌트 카탈로그 5테마)
+node build.mjs example         # → dist/example.html (레이아웃·컴포넌트 카탈로그, 기본 tech)
 ```
 
 ---
@@ -43,12 +43,12 @@ git clone <이 레포 주소>
 cd marp-ppt-kit
 npm install
 
-# 데모 빌드 — 살아있는 스타일가이드 (레이아웃·컴포넌트 카탈로그 × 5테마)
-node build.mjs example                    # 5테마 전부 → dist/example.<테마>.html
-node build.mjs example --theme=editorial  # 한 테마만 (PPT_THEME=editorial 도 동일)
+# 데모 빌드 — 살아있는 스타일가이드 (레이아웃·컴포넌트 카탈로그)
+node build.mjs example                    # 기본 테마(tech) → dist/example.html
+node build.mjs example --theme=editorial  # 다른 테마로 → dist/example.editorial.html (PPT_THEME=editorial 도 동일)
 
 # 편집 중엔 라이브 뷰어 (저장 시 자동 재빌드 + 브라우저 새로고침)
-node build.mjs example --serve            # --port=N 으로 포트 변경
+node build.mjs example --serve            # --theme=editorial 로 그 테마를 라이브로 · --port=N
 
 # 출력
 node build.mjs <덱> pdf             # PDF  (Chrome 필요)
@@ -168,7 +168,7 @@ marp-ppt-kit/
 ├── build.mjs                # 빌드 파이프라인 (HTML/PDF/PPTX + serve 뷰어)
 ├── marp.config.mjs          # Marp 엔진 확장 (markdown-it 플러그인 3종)
 ├── decks/example/           # 레이아웃·컴포넌트 카탈로그(스타일가이드 = 옛 showcase)
-│                            #   _themes.txt로 5테마 빌드 = 테마 검증 하니스
+│                            #   기본 테마로 빌드, --theme=/PPT_THEME 로 테마 바꿔 확인 = 테마 검증 하니스
 └── decks/<발표이름>/         # 발표 1개 = slides/ 를 가진 디렉토리
     ├── _header.md           #   Marp 전역 설정 (theme·paginate·title)
     ├── brief.md             #   상담 결과 = 슬라이드별 내용+디자인 계획표

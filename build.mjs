@@ -406,7 +406,7 @@ function buildDeck(deck, fmt, theme = null) {
 
   const headerPath = join(deckDir, '_header.md');
   let header = existsSync(headerPath) ? readFileSync(headerPath, 'utf8').trim() : DEFAULT_HEADER;
-  // 테마 override(--theme=·PPT_THEME·_themes.txt): _header의 theme: 줄을 덮어쓴다(없으면 marp: true 뒤에 주입).
+  // 테마 override(--theme=·PPT_THEME): _header의 theme: 줄을 덮어쓴다(없으면 marp: true 뒤에 주입).
   if (theme) header = /^theme:\s*\S+/m.test(header)
     ? header.replace(/^theme:\s*\S+.*$/m, `theme: ${theme}`)
     : header.replace(/^(marp:\s*true.*)$/mi, `$1\ntheme: ${theme}`);
@@ -563,7 +563,7 @@ const serveMode = rawArgs.includes('--serve');
 const noOpen = rawArgs.includes('--no-open');   // --serve 시 브라우저 자동 열기 끄기
 const portArg = rawArgs.find(a => a.startsWith('--port='));
 const PORT = portArg ? (parseInt(portArg.split('=')[1]) || 4000) : 4000;
-// 테마 override: --theme=<이름> > PPT_THEME 환경변수. 있으면 _header·_themes 무시하고 이 테마로.
+// 테마 override: --theme=<이름> > PPT_THEME 환경변수. 있으면 _header의 theme 무시하고 이 테마로 → dist/<deck>.<theme>.html.
 const themeArg = rawArgs.find(a => a.startsWith('--theme='));
 const cliTheme = themeArg ? themeArg.split('=')[1] : (process.env.PPT_THEME || null);
 const positional = rawArgs.filter(a => !a.startsWith('--'));
@@ -588,17 +588,6 @@ function findDecks(dir, rel = '') {
 }
 
 const decksDir = join(root, 'decks');
-
-// 덱이 빌드될 테마 목록: --theme/PPT_THEME override > _themes.txt(한 줄에 하나) > [null](=_header 기본 테마로 단일 빌드).
-function deckThemes(deck) {
-  if (cliTheme) return [cliTheme];
-  const f = join(decksDir, deck, '_themes.txt');
-  if (existsSync(f)) {
-    const list = readFileSync(f, 'utf8').split('\n').map(s => s.trim()).filter(s => s && !s.startsWith('#'));
-    if (list.length) return list;
-  }
-  return [null];
-}
 let targets;
 if (!arg || arg === 'all') {
   targets = findDecks(decksDir);
@@ -617,6 +606,6 @@ if (serveMode) {
   serve(targets[0], PORT, !noOpen, cliTheme);
 } else {
   let ok = true;
-  for (const d of targets) for (const t of deckThemes(d)) ok = buildDeck(d, fmt, t) && ok;
+  for (const d of targets) ok = buildDeck(d, fmt, cliTheme) && ok;
   process.exit(ok ? 0 : 1);
 }
