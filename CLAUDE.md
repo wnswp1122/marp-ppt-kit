@@ -73,9 +73,12 @@ PowerPoint의 "슬라이드 레이아웃 + 도형"과 같은 모델. 둘 다 구
 | `/diagram [deck] <n> <설명>` | 다이어그램 | Mermaid/CSS 박스로 그래프 작성. 시각 품질 규칙 강제(LR 기본·노드≤8·짧은 라벨·눈 검증) |
 | `/review <deck>` | 검토만 | 별도 패스로 `critic`이 서사·과밀·동결·흐름·디자인 진단(고치지 않음) |
 | `/build <deck> [fmt]` | 빌드 | `node build.mjs` 호출 |
+| `/reference <파일>` | 레퍼런스 흡수 | 참고자료(PDF/HTML/PPTX/이미지) 분석 → 추출 메뉴 질문 → 색·컴포넌트·패턴을 `themes/`·`base.css`·`PATTERNS.md`에 반영(제안→승인). 덱 제작과 별개의 **메타** 스킬 |
 
 전형적 흐름: `/brainstorm` → `/generate` → (`/slide`·`/content`·`/design` 다듬기) → `/review` → `/build`
 작성과 검토는 **다른 패스**로 분리한다 — 검토는 `/review`(내부적으로 `critic`/`code-reviewer`에 위임).
+
+**`/reference` 자연어 트리거(ppt 안에서만):** 사용자가 **PDF/HTML/PPTX/이미지 파일을 주면** → "reference 스킬로 분석·추출할까요?"를 **먼저 묻고** 예일 때 실행. 사용자가 **"추출해·레퍼런스로·이 스타일 가져와·흡수해"** 등 명시적 의도를 말하면 → 바로 `/reference` 실행. (단순 "이 파일 뭐야?" 내용 질문엔 발동 안 함.)
 
 ## 슬라이드 작성 규칙
 
